@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Simulator - Posts Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            padding: 8px 15px;
+            font-size: 12px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .delete-btn:hover {
+            box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4);
+        }
+
+        #postsList {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .post-item {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .post-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .post-item h3 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .post-item p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .post-meta {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .stat-box .number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-box .label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .refresh-btn {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 API Simulator - Posts Manager</h1>
+            <p>Create, view, and delete posts in real-time</p>
+        </header>
+
+        <div class="content">
+            <!-- Create Post Section -->
+            <div class="card">
+                <h2>➕ Create New Post</h2>
+                <div id="createStatus"></div>
+                
+                <form id="postForm">
+                    <div class="form-group">
+                        <label for="userId">User ID (1-10)</label>
+                        <input type="number" id="userId" min="1" max="10" value="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">Post Title</label>
+                        <input type="text" id="title" placeholder="Enter post title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="body">Post Content</label>
+                        <textarea id="body" placeholder="Enter post content" required></textarea>
+                    </div>
+
+                    <button type="submit">📤 Create Post</button>
+                </form>
+
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
+
+                <h3 style="margin-top: 20px; margin-bottom: 15px; color: #333;">🔧 Other Operations</h3>
+                
+                <button onclick="loadUsers()" style="width: 100%; margin-bottom: 10px;">👥 View All Users</button>
+                <button onclick="loadComments()" style="width: 100%; margin-bottom: 10px;">💬 View Comments</button>
+                <button onclick="getStats()" style="width: 100%;">📊 View Statistics</button>
+            </div>
+
+            <!-- Posts List Section -->
+            <div class="card">
+                <h2>📋 All Posts</h2>
+                <button class="refresh-btn" onclick="loadPosts()">🔄 Refresh Posts</button>
+                
+                <div class="stats" id="statsBox" style="display: none;">
+                    <div class="stat-box">
+                        <div class="number" id="totalPosts">0</div>
+                        <div class="label">Total Posts</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number" id="localPosts">0</div>
+                        <div class="label">Local Posts</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number" id="avgLength">0</div>
+                        <div class="label">Avg. Length</div>
+                    </div>
+                </div>
+
+                <div id="listStatus"></div>
+                <div id="postsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let allPosts = [];
+
+        // Load posts on page load
+        window.onload = () => {
+            loadPosts();
+        };
+
+        // Load all posts
+        async function loadPosts() {
+            const statusDiv = document.getElementById('listStatus');
+            statusDiv.innerHTML = '<div class="status loading">Loading posts...</div>';
+            
+            try {
+                const response = await fetch(`${API_URL}/posts`);
+                if (!response.ok) throw new Error('Failed to load');
+                
+                allPosts = await response.json();
+                displayPosts(allPosts);
+                updateStats();
+                statusDiv.innerHTML = `<div class="status success">✅ Loaded ${allPosts.length} posts</div>`;
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ ${error.message}</div>`;
+            }
+        }
+
+        // Display posts
+        function displayPosts(posts) {
+            const postsList = document.getElementById('postsList');
+            
+            if (posts.length === 0) {
+                postsList.innerHTML = '<p style="text-align: center; color: #999;">No posts yet</p>';
+                return;
+            }
+
+            postsList.innerHTML = posts.map(post => `
+                <div class="post-item">
+                    <h3>${post.title}</h3>
+                    <div class="post-meta">👤 User ${post.userId} | 📝 ID: ${post.id}</div>
+                    <p>${post.body}</p>
+                    <button class="delete-btn" onclick="deletePost(${post.id})">🗑️ Delete Post</button>
+                </div>
+            `).join('');
+        }
+
+        // Create new post
+        document.getElementById('postForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const statusDiv = document.getElementById('createStatus');
+            const newPost = {
+                userId: parseInt(document.getElementById('userId').value),
+                title: document.getElementById('title').value,
+                body: document.getElementById('body').value
+            };
+
+            statusDiv.innerHTML = '<div class="status loading">Creating post...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/posts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newPost)
+                });
+
+                if (!response.ok) throw new Error('Failed to create');
+                
+                const createdPost = await response.json();
+                allPosts.unshift(createdPost);
+                displayPosts(allPosts);
+                updateStats();
+                
+                document.getElementById('postForm').reset();
+                statusDiv.innerHTML = `<div class="status success">✅ Post created! ID: ${createdPost.id}</div>`;
+                
+                setTimeout(() => statusDiv.innerHTML = '', 3000);
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ ${error.message}</div>`;
+            }
+        });
+
+        // Delete post
+        async function deletePost(postId) {
+            if (!confirm('Delete this post?')) return;
+
+            const statusDiv = document.getElementById('listStatus');
+            statusDiv.innerHTML = '<div class="status loading">Deleting...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/posts/${postId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) throw new Error('Failed to delete');
+
+                allPosts = allPosts.filter(p => p.id !== postId);
+                displayPosts(allPosts);
+                updateStats();
+                statusDiv.innerHTML = '<div class="status success">✅ Post deleted!</div>';
+                
+                setTimeout(() => statusDiv.innerHTML = '', 2000);
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ ${error.message}</div>`;
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const localPosts = allPosts.filter(p => p.id > 100).length;
+            const avgLength = allPosts.length > 0 
+                ? Math.round(allPosts.reduce((sum, p) => sum + p.body.length, 0) / allPosts.length)
+                : 0;
+
+            document.getElementById('statsBox').style.display = 'grid';
+            document.getElementById('totalPosts').textContent = allPosts.length;
+            document.getElementById('localPosts').textContent = localPosts;
+            document.getElementById('avgLength').textContent = avgLength;
+        }
+
+        // Load users
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${API_URL}/users/names-only`);
+                const users = await response.json();
+                
+                let usersList = users.map(u => `👤 ${u.name} (${u.email})`).join('\n');
+                alert(`📋 Users:\n\n${usersList}`);
+            } catch (error) {
+                alert(`❌ Error: ${error.message}`);
+            }
+        }
+
+        // Load comments
+        async function loadComments() {
+            try {
+                const response = await fetch(`${API_URL}/comments`);
+                const comments = await response.json();
+                
+                let commentsList = comments.slice(0, 5).map(c => `💬 ${c.name}\n   ${c.body.substring(0, 50)}...`).join('\n\n');
+                alert(`📝 Comments (first 5):\n\n${commentsList}`);
+            } catch (error) {
+                alert(`❌ Error: ${error.message}`);
+            }
+        }
+
+        // Get statistics
+        async function getStats() {
+            try {
+                const response = await fetch(`${API_URL}/stats`);
+                const stats = await response.json();
+                
+                alert(`📊 API Statistics:\n\n` +
+                    `👥 Total Users: ${stats.totalUsers}\n` +
+                    `📝 Total Posts: ${stats.totalPosts}\n` +
+                    `💬 Total Comments: ${stats.totalComments}\n` +
+                    `📈 Avg Comments per Post: ${stats.avgCommentsPerPost}`);
+            } catch (error) {
+                alert(`❌ Error: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>
