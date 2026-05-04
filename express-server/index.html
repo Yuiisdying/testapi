@@ -1,295 +1,157 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Simulator - Posts Manager</title>
+    <title>Posts Manager</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            margin: 0;
+            padding: 10px;
         }
-
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
         }
-
-        header {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        h1 {
             text-align: center;
-        }
-
-        header h1 {
             color: #333;
-            margin-bottom: 10px;
         }
-
-        header p {
-            color: #666;
-            font-size: 14px;
-        }
-
         .content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
             gap: 20px;
-            margin-bottom: 20px;
         }
-
-        .card {
+        .box {
+            flex: 1;
             background: white;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+            padding: 15px;
         }
-
-        .card h2 {
+        h2 {
+            border-bottom: 1px solid #999;
+            padding-bottom: 5px;
             color: #333;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
         }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-            font-weight: 500;
-        }
-
         input, textarea {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-family: inherit;
-            font-size: 14px;
+            padding: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #999;
+            font-family: Arial;
         }
-
         textarea {
+            min-height: 60px;
             resize: vertical;
-            min-height: 80px;
         }
-
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
         button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #666;
             color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .delete-btn {
-            background: #e74c3c;
             padding: 8px 15px;
-            font-size: 12px;
-            margin-top: 10px;
+            border: 1px solid #333;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #333;
+        }
+        .post {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .post h3 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+        .post p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 13px;
+        }
+        .post-meta {
+            font-size: 11px;
+            color: #999;
+        }
+        .delete-btn {
+            background: #cc0000;
+            margin-top: 5px;
             width: 100%;
         }
-
         .delete-btn:hover {
-            box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4);
+            background: #990000;
         }
-
+        .status {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #999;
+            font-size: 12px;
+        }
+        .status.success {
+            background: #ccffcc;
+            border-color: #00cc00;
+        }
+        .status.error {
+            background: #ffcccc;
+            border-color: #cc0000;
+        }
+        .status.loading {
+            background: #ffffcc;
+            border-color: #cccc00;
+        }
         #postsList {
             max-height: 600px;
             overflow-y: auto;
         }
-
-        .post-item {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-
-        .post-item:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transform: translateX(5px);
-        }
-
-        .post-item h3 {
+        label {
+            display: block;
+            margin-bottom: 3px;
             color: #333;
-            font-size: 16px;
-            margin-bottom: 8px;
-        }
-
-        .post-item p {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 8px;
-        }
-
-        .post-meta {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 10px;
-        }
-
-        .status {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-weight: 500;
-            text-align: center;
-        }
-
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .status.loading {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .stat-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            text-align: center;
-        }
-
-        .stat-box .number {
-            font-size: 24px;
             font-weight: bold;
-            margin-bottom: 5px;
         }
-
-        .stat-box .label {
-            font-size: 12px;
-            opacity: 0.9;
-        }
-
-        .refresh-btn {
-            width: 100%;
-            margin-bottom: 15px;
-        }
-
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
             .content {
-                grid-template-columns: 1fr;
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>📝 API Simulator - Posts Manager</h1>
-            <p>Create, view, and delete posts in real-time</p>
-        </header>
-
+        <h1>Posts Manager</h1>
+        
         <div class="content">
-            <!-- Create Post Section -->
-            <div class="card">
-                <h2>➕ Create New Post</h2>
+            <!-- Left: Create Post -->
+            <div class="box">
+                <h2>Create New Post</h2>
                 <div id="createStatus"></div>
                 
                 <form id="postForm">
-                    <div class="form-group">
-                        <label for="userId">User ID (1-10)</label>
-                        <input type="number" id="userId" min="1" max="10" value="1" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="title">Post Title</label>
-                        <input type="text" id="title" placeholder="Enter post title" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="body">Post Content</label>
-                        <textarea id="body" placeholder="Enter post content" required></textarea>
-                    </div>
-
-                    <button type="submit">📤 Create Post</button>
+                    <label for="userId">User ID (1-10):</label>
+                    <input type="number" id="userId" min="1" max="10" value="1" required>
+                    
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" placeholder="Enter title" required>
+                    
+                    <label for="body">Content:</label>
+                    <textarea id="body" placeholder="Enter content" required></textarea>
+                    
+                    <button type="submit">Create Post</button>
                 </form>
 
-                <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
+                <hr>
 
-                <h3 style="margin-top: 20px; margin-bottom: 15px; color: #333;">🔧 Other Operations</h3>
-                
-                <button onclick="loadUsers()" style="width: 100%; margin-bottom: 10px;">👥 View All Users</button>
-                <button onclick="loadComments()" style="width: 100%; margin-bottom: 10px;">💬 View Comments</button>
-                <button onclick="getStats()" style="width: 100%;">📊 View Statistics</button>
+                <h3>Other Options</h3>
+                <button onclick="loadUsers()" style="width: 100%; margin-bottom: 5px;">View Users</button>
+                <button onclick="loadComments()" style="width: 100%; margin-bottom: 5px;">View Comments</button>
+                <button onclick="getStats()" style="width: 100%;">View Stats</button>
             </div>
 
-            <!-- Posts List Section -->
-            <div class="card">
-                <h2>📋 All Posts</h2>
-                <button class="refresh-btn" onclick="loadPosts()">🔄 Refresh Posts</button>
+            <!-- Right: Posts List -->
+            <div class="box">
+                <h2>All Posts</h2>
+                <button onclick="loadPosts()" style="width: 100%; margin-bottom: 10px;">Refresh</button>
                 
-                <div class="stats" id="statsBox" style="display: none;">
-                    <div class="stat-box">
-                        <div class="number" id="totalPosts">0</div>
-                        <div class="label">Total Posts</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="number" id="localPosts">0</div>
-                        <div class="label">Local Posts</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="number" id="avgLength">0</div>
-                        <div class="label">Avg. Length</div>
-                    </div>
-                </div>
-
                 <div id="listStatus"></div>
                 <div id="postsList"></div>
             </div>
@@ -300,49 +162,44 @@
         const API_URL = 'http://localhost:5000/api';
         let allPosts = [];
 
-        // Load posts on page load
         window.onload = () => {
             loadPosts();
         };
 
-        // Load all posts
         async function loadPosts() {
             const statusDiv = document.getElementById('listStatus');
-            statusDiv.innerHTML = '<div class="status loading">Loading posts...</div>';
+            statusDiv.innerHTML = '<div class="status loading">Loading...</div>';
             
             try {
                 const response = await fetch(`${API_URL}/posts`);
-                if (!response.ok) throw new Error('Failed to load');
+                if (!response.ok) throw new Error('Failed');
                 
                 allPosts = await response.json();
                 displayPosts(allPosts);
-                updateStats();
-                statusDiv.innerHTML = `<div class="status success">✅ Loaded ${allPosts.length} posts</div>`;
+                statusDiv.innerHTML = `<div class="status success">Loaded ${allPosts.length} posts</div>`;
             } catch (error) {
-                statusDiv.innerHTML = `<div class="status error">❌ ${error.message}</div>`;
+                statusDiv.innerHTML = `<div class="status error">Error: ${error.message}</div>`;
             }
         }
 
-        // Display posts
         function displayPosts(posts) {
             const postsList = document.getElementById('postsList');
             
             if (posts.length === 0) {
-                postsList.innerHTML = '<p style="text-align: center; color: #999;">No posts yet</p>';
+                postsList.innerHTML = '<p>No posts</p>';
                 return;
             }
 
             postsList.innerHTML = posts.map(post => `
-                <div class="post-item">
+                <div class="post">
                     <h3>${post.title}</h3>
-                    <div class="post-meta">👤 User ${post.userId} | 📝 ID: ${post.id}</div>
+                    <div class="post-meta">User ${post.userId} | ID: ${post.id}</div>
                     <p>${post.body}</p>
-                    <button class="delete-btn" onclick="deletePost(${post.id})">🗑️ Delete Post</button>
+                    <button class="delete-btn" onclick="deletePost(${post.id})">Delete</button>
                 </div>
             `).join('');
         }
 
-        // Create new post
         document.getElementById('postForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -353,7 +210,7 @@
                 body: document.getElementById('body').value
             };
 
-            statusDiv.innerHTML = '<div class="status loading">Creating post...</div>';
+            statusDiv.innerHTML = '<div class="status loading">Creating...</div>';
 
             try {
                 const response = await fetch(`${API_URL}/posts`, {
@@ -362,23 +219,21 @@
                     body: JSON.stringify(newPost)
                 });
 
-                if (!response.ok) throw new Error('Failed to create');
+                if (!response.ok) throw new Error('Failed');
                 
                 const createdPost = await response.json();
                 allPosts.unshift(createdPost);
                 displayPosts(allPosts);
-                updateStats();
                 
                 document.getElementById('postForm').reset();
-                statusDiv.innerHTML = `<div class="status success">✅ Post created! ID: ${createdPost.id}</div>`;
+                statusDiv.innerHTML = `<div class="status success">Created! ID: ${createdPost.id}</div>`;
                 
                 setTimeout(() => statusDiv.innerHTML = '', 3000);
             } catch (error) {
-                statusDiv.innerHTML = `<div class="status error">❌ ${error.message}</div>`;
+                statusDiv.innerHTML = `<div class="status error">Error: ${error.message}</div>`;
             }
         });
 
-        // Delete post
         async function deletePost(postId) {
             if (!confirm('Delete this post?')) return;
 
@@ -390,71 +245,55 @@
                     method: 'DELETE'
                 });
 
-                if (!response.ok) throw new Error('Failed to delete');
+                if (!response.ok) throw new Error('Failed');
 
                 allPosts = allPosts.filter(p => p.id !== postId);
                 displayPosts(allPosts);
-                updateStats();
-                statusDiv.innerHTML = '<div class="status success">✅ Post deleted!</div>';
+                statusDiv.innerHTML = '<div class="status success">Deleted!</div>';
                 
                 setTimeout(() => statusDiv.innerHTML = '', 2000);
             } catch (error) {
-                statusDiv.innerHTML = `<div class="status error">❌ ${error.message}</div>`;
+                statusDiv.innerHTML = `<div class="status error">Error: ${error.message}</div>`;
             }
         }
 
-        // Update statistics
-        function updateStats() {
-            const localPosts = allPosts.filter(p => p.id > 100).length;
-            const avgLength = allPosts.length > 0 
-                ? Math.round(allPosts.reduce((sum, p) => sum + p.body.length, 0) / allPosts.length)
-                : 0;
-
-            document.getElementById('statsBox').style.display = 'grid';
-            document.getElementById('totalPosts').textContent = allPosts.length;
-            document.getElementById('localPosts').textContent = localPosts;
-            document.getElementById('avgLength').textContent = avgLength;
-        }
-
-        // Load users
         async function loadUsers() {
             try {
                 const response = await fetch(`${API_URL}/users/names-only`);
                 const users = await response.json();
                 
-                let usersList = users.map(u => `👤 ${u.name} (${u.email})`).join('\n');
-                alert(`📋 Users:\n\n${usersList}`);
+                let list = users.map(u => `${u.name} - ${u.email}`).join('\n');
+                alert(list);
             } catch (error) {
-                alert(`❌ Error: ${error.message}`);
+                alert('Error: ' + error.message);
             }
         }
 
-        // Load comments
         async function loadComments() {
             try {
                 const response = await fetch(`${API_URL}/comments`);
                 const comments = await response.json();
                 
-                let commentsList = comments.slice(0, 5).map(c => `💬 ${c.name}\n   ${c.body.substring(0, 50)}...`).join('\n\n');
-                alert(`📝 Comments (first 5):\n\n${commentsList}`);
+                let list = comments.slice(0, 5).map(c => `${c.name}\n${c.body.substring(0, 50)}...`).join('\n\n');
+                alert(list);
             } catch (error) {
-                alert(`❌ Error: ${error.message}`);
+                alert('Error: ' + error.message);
             }
         }
 
-        // Get statistics
         async function getStats() {
             try {
                 const response = await fetch(`${API_URL}/stats`);
                 const stats = await response.json();
                 
-                alert(`📊 API Statistics:\n\n` +
-                    `👥 Total Users: ${stats.totalUsers}\n` +
-                    `📝 Total Posts: ${stats.totalPosts}\n` +
-                    `💬 Total Comments: ${stats.totalComments}\n` +
-                    `📈 Avg Comments per Post: ${stats.avgCommentsPerPost}`);
+                alert(
+                    `Users: ${stats.totalUsers}\n` +
+                    `Posts: ${stats.totalPosts}\n` +
+                    `Comments: ${stats.totalComments}\n` +
+                    `Avg per Post: ${stats.avgCommentsPerPost}`
+                );
             } catch (error) {
-                alert(`❌ Error: ${error.message}`);
+                alert('Error: ' + error.message);
             }
         }
     </script>
