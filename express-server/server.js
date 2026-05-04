@@ -8,8 +8,104 @@ const PLACEHOLDER = 'https://jsonplaceholder.typicode.com';
 // Middleware
 app.use(express.json());
 
-// ==================== ENDPOINT 1: USERS ====================
-// GET all users
+// ==================== DATA EXTRACTION EXAMPLES ====================
+
+// Example 1: Get only specific fields
+app.get('/api/users/names-only', async (req, res) => {
+  try {
+    const response = await fetch(`${PLACEHOLDER}/users`);
+    const data = await response.json();
+    
+    // Extract ONLY names and emails
+    const names = data.map(user => ({
+      id: user.id,
+      name: user.name,
+      email: user.email
+    }));
+    
+    res.json(names);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch' });
+  }
+});
+
+// Example 2: Filter data (get only posts from user 1)
+app.get('/api/posts/by-user/:userId', async (req, res) => {
+  try {
+    const response = await fetch(`${PLACEHOLDER}/posts`);
+    const data = await response.json();
+    
+    // Filter posts by userId
+    const userPosts = data.filter(post => post.userId == req.params.userId);
+    
+    res.json(userPosts);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch' });
+  }
+});
+
+// Example 3: Count items
+app.get('/api/stats', async (req, res) => {
+  try {
+    const [usersRes, postsRes, commentsRes] = await Promise.all([
+      fetch(`${PLACEHOLDER}/users`),
+      fetch(`${PLACEHOLDER}/posts`),
+      fetch(`${PLACEHOLDER}/comments`)
+    ]);
+    
+    const users = await usersRes.json();
+    const posts = await postsRes.json();
+    const comments = await commentsRes.json();
+    
+    res.json({
+      totalUsers: users.length,
+      totalPosts: posts.length,
+      totalComments: comments.length,
+      avgCommentsPerPost: (comments.length / posts.length).toFixed(2)
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch stats' });
+  }
+});
+
+// Example 4: Sort data (top users by ID)
+app.get('/api/users/sorted', async (req, res) => {
+  try {
+    const response = await fetch(`${PLACEHOLDER}/users`);
+    const data = await response.json();
+    
+    // Sort users by name A-Z
+    const sorted = data.sort((a, b) => a.name.localeCompare(b.name));
+    
+    res.json(sorted.slice(0, 5)); // Return only first 5
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch' });
+  }
+});
+
+// Example 5: Transform data structure
+app.get('/api/users/enhanced', async (req, res) => {
+  try {
+    const response = await fetch(`${PLACEHOLDER}/users`);
+    const data = await response.json();
+    
+    // Transform/add new fields
+    const enhanced = data.map(user => ({
+      ...user,  // Keep all original fields
+      fullInfo: `${user.name} (${user.email})`,  // Add new field
+      isAdmin: user.id === 1,  // Add computed field
+      domain: user.email.split('@')[1]  // Extract domain from email
+    }));
+    
+    res.json(enhanced);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch' });
+  }
+});
+
+// ==================== END DATA EXTRACTION EXAMPLES ====================
+
+// ORIGINAL USERS ENDPOINT
 app.get('/api/users', async (req, res) => {
   try {
     const response = await fetch(`${PLACEHOLDER}/users`);
@@ -31,7 +127,6 @@ app.get('/api/users/:id', async (req, res) => {
   }
 });
 
-// POST create new user (mock)
 app.post('/api/users', (req, res) => {
   const newUser = {
     id: Math.floor(Math.random() * 10000),
@@ -57,7 +152,7 @@ app.delete('/api/users/:id', (req, res) => {
   res.status(204).json({ message: `User ${req.params.id} deleted` });
 });
 
-// ==================== ENDPOINT 2: POSTS ====================
+// ENDPOINT 2: POSTS 
 // GET all posts
 app.get('/api/posts', async (req, res) => {
   try {
@@ -102,7 +197,7 @@ app.delete('/api/posts/:id', (req, res) => {
   res.status(204).json({ message: `Post ${req.params.id} deleted` });
 });
 
-// ==================== ENDPOINT 3: COMMENTS ====================
+//  ENDPOINT 3: COMMENTS 
 // GET all comments
 app.get('/api/comments', async (req, res) => {
   try {
