@@ -21,7 +21,6 @@ function getAPI(endpoint) {
 
 console.log(' Testing Express API endpoints...\n');
 
-// Test all endpoints
 getAPI('/');
 getAPI('/api/users');
 getAPI('/api/posts');

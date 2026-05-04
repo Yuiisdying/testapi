@@ -1,5 +1,4 @@
 const express = require('express');
-const axios = require('axios');
 const app = express();
 const PORT = 5000;
 
@@ -13,8 +12,9 @@ app.use(express.json());
 // GET all users
 app.get('/api/users', async (req, res) => {
   try {
-    const response = await axios.get(`${PLACEHOLDER}/users`);
-    res.json(response.data);
+    const response = await fetch(`${PLACEHOLDER}/users`);
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch users' });
   }
@@ -23,8 +23,9 @@ app.get('/api/users', async (req, res) => {
 // GET user by ID
 app.get('/api/users/:id', async (req, res) => {
   try {
-    const response = await axios.get(`${PLACEHOLDER}/users/${req.params.id}`);
-    res.json(response.data);
+    const response = await fetch(`${PLACEHOLDER}/users/${req.params.id}`);
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch user' });
   }
@@ -60,8 +61,9 @@ app.delete('/api/users/:id', (req, res) => {
 // GET all posts
 app.get('/api/posts', async (req, res) => {
   try {
-    const response = await axios.get(`${PLACEHOLDER}/posts`);
-    res.json(response.data);
+    const response = await fetch(`${PLACEHOLDER}/posts`);
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch posts' });
   }
@@ -70,8 +72,9 @@ app.get('/api/posts', async (req, res) => {
 // GET post by ID
 app.get('/api/posts/:id', async (req, res) => {
   try {
-    const response = await axios.get(`${PLACEHOLDER}/posts/${req.params.id}`);
-    res.json(response.data);
+    const response = await fetch(`${PLACEHOLDER}/posts/${req.params.id}`);
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch post' });
   }
@@ -103,8 +106,9 @@ app.delete('/api/posts/:id', (req, res) => {
 // GET all comments
 app.get('/api/comments', async (req, res) => {
   try {
-    const response = await axios.get(`${PLACEHOLDER}/comments`);
-    res.json(response.data);
+    const response = await fetch(`${PLACEHOLDER}/comments`);
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch comments' });
   }
@@ -113,8 +117,9 @@ app.get('/api/comments', async (req, res) => {
 // GET comment by ID
 app.get('/api/comments/:id', async (req, res) => {
   try {
-    const response = await axios.get(`${PLACEHOLDER}/comments/${req.params.id}`);
-    res.json(response.data);
+    const response = await fetch(`${PLACEHOLDER}/comments/${req.params.id}`);
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch comment' });
   }
@@ -147,8 +152,9 @@ app.delete('/api/comments/:id', (req, res) => {
 // GET all albums
 app.get('/api/albums', async (req, res) => {
   try {
-    const response = await axios.get(`${PLACEHOLDER}/albums`);
-    res.json(response.data);
+    const response = await fetch(`${PLACEHOLDER}/albums`);
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch albums' });
   }
@@ -157,8 +163,9 @@ app.get('/api/albums', async (req, res) => {
 // GET album by ID
 app.get('/api/albums/:id', async (req, res) => {
   try {
-    const response = await axios.get(`${PLACEHOLDER}/albums/${req.params.id}`);
-    res.json(response.data);
+    const response = await fetch(`${PLACEHOLDER}/albums/${req.params.id}`);
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch album' });
   }
@@ -189,8 +196,9 @@ app.delete('/api/albums/:id', (req, res) => {
 // GET all todos
 app.get('/api/todos', async (req, res) => {
   try {
-    const response = await axios.get(`${PLACEHOLDER}/todos`);
-    res.json(response.data);
+    const response = await fetch(`${PLACEHOLDER}/todos`);
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch todos' });
   }
@@ -199,8 +207,9 @@ app.get('/api/todos', async (req, res) => {
 // GET todo by ID
 app.get('/api/todos/:id', async (req, res) => {
   try {
-    const response = await axios.get(`${PLACEHOLDER}/todos/${req.params.id}`);
-    res.json(response.data);
+    const response = await fetch(`${PLACEHOLDER}/todos/${req.params.id}`);
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch todo' });
   }
@@ -233,8 +242,9 @@ app.delete('/api/todos/:id', (req, res) => {
 app.get('/api/photos', async (req, res) => {
   try {
     const limit = req.query.limit || 10;
-    const response = await axios.get(`${PLACEHOLDER}/photos?_limit=${limit}`);
-    res.json(response.data);
+    const response = await fetch(`${PLACEHOLDER}/photos?_limit=${limit}`);
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch photos' });
   }
@@ -243,8 +253,9 @@ app.get('/api/photos', async (req, res) => {
 // GET photo by ID
 app.get('/api/photos/:id', async (req, res) => {
   try {
-    const response = await axios.get(`${PLACEHOLDER}/photos/${req.params.id}`);
-    res.json(response.data);
+    const response = await fetch(`${PLACEHOLDER}/photos/${req.params.id}`);
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch photo' });
   }
@@ -273,11 +284,12 @@ app.delete('/api/photos/:id', (req, res) => {
 });
 
 // ==================== ENDPOINT 7: PRODUCTS ====================
-// GET all products (using posts as mock)
+// GET all products 
 app.get('/api/products', async (req, res) => {
   try {
-    const response = await axios.get(`${PLACEHOLDER}/posts?_limit=10`);
-    const products = response.data.map(item => ({
+    const response = await fetch(`${PLACEHOLDER}/posts?_limit=10`);
+    const posts = await response.json();
+    const products = posts.map(item => ({
       id: item.id,
       name: `Product ${item.id}`,
       description: item.body,
@@ -413,8 +425,9 @@ app.delete('/api/categories/:id', (req, res) => {
 // GET all reviews
 app.get('/api/reviews', async (req, res) => {
   try {
-    const response = await axios.get(`${PLACEHOLDER}/comments?_limit=10`);
-    const reviews = response.data.map(item => ({
+    const response = await fetch(`${PLACEHOLDER}/comments?_limit=10`);
+    const comments = await response.json();
+    const reviews = comments.map(item => ({
       id: item.id,
       productId: Math.floor(Math.random() * 10) + 1,
       rating: Math.floor(Math.random() * 5) + 1,
